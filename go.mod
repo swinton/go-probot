@@ -1,4 +1,4 @@
-module github.com/swinton/go-probot
+module github.com/ccureau/go-probot
 
 go 1.14
 

@@ -66,7 +66,7 @@ func NewEnterpriseClient(app *App, installation *installation) (*github.Client, 
 
 	// Overwrite User-Agent, for logging
 	// See: https://developer.github.com/v3/#user-agent-required
-	client.UserAgent = "swinton/go-probot"
+	client.UserAgent = "ccureau/go-probot"
 
 	return client, nil
 }

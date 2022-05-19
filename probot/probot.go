@@ -9,7 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var portVar int
+var (
+	portVar int
+	ipVar   string
+)
 
 var app *App
 
@@ -31,12 +34,13 @@ func Start() {
 
 	// Server
 	log.Printf("Server running at: http://localhost:%d/\n", portVar)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", portVar), router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", ipVar, portVar), router))
 }
 
 func initialize() {
 	// Parse incoming command-line arguments
-	flag.IntVar(&portVar, "p", 8000, "port to listen on, defaults to 8000")
+	flag.IntVar(&portVar, "p", 8000, "port to listen on (default: 8000)")
+	flag.StringVar(&ipVar, "i", "127.0.0.1", "interface to listen on (default: 127.0.0.1)")
 	flag.Parse()
 
 	// Initialize app
