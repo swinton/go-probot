@@ -1,5 +1,5 @@
-# :robot: `go-probot` ![](https://github.com/swinton/go-probot/workflows/Build/badge.svg)
 > GitHub Apps to automate your workflow, in Golang, inspired by [Probot](https://probot.github.io)
+> Forked and enhanced from [Steve Winton's example](https://github.com/swinton/go-probot)
 
 ## Example
 Check out [the basic example](example/basic.go).

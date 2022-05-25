@@ -8,8 +8,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/bradleyfalzon/ghinstallation"
-	"github.com/google/go-github/github"
+	"github.com/bradleyfalzon/ghinstallation/v2"
+	"github.com/google/go-github/v32/github"
 )
 
 // App encapsulates the fields needed to define a GitHub App
@@ -66,7 +66,7 @@ func NewEnterpriseClient(app *App, installation *installation) (*github.Client, 
 
 	// Overwrite User-Agent, for logging
 	// See: https://developer.github.com/v3/#user-agent-required
-	client.UserAgent = "swinton/go-probot"
+	client.UserAgent = "ccureau/go-probot"
 
 	return client, nil
 }

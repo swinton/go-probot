@@ -1,6 +1,6 @@
 package probot
 
-import "github.com/google/go-github/github"
+import "github.com/google/go-github/v32/github"
 
 type eventHandler func(ctx *Context) error
 

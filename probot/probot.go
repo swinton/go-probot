@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 var (
@@ -16,31 +14,22 @@ var (
 
 var app *App
 
-// Router creates a new mux.Router and registers our webhook handler
-func Router(path string) *mux.Router {
-	r := mux.NewRouter()
-
-	r.HandleFunc(path, rootHandler(app)).Methods("POST")
-
-	return r
-}
-
 // Start handles initialization and setup of the webhook server
 func Start() {
 	initialize()
 
-	// Webhook router
-	router := Router("/")
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", rootHandler(app))
 
 	// Server
 	log.Printf("Server running at: http://%s:%d/\n", ipVar, portVar)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", ipVar, portVar), router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", ipVar, portVar), mux))
 }
 
 func initialize() {
 	// Parse incoming command-line arguments
 	flag.IntVar(&portVar, "p", 8000, "port to listen on (default: 8000)")
-	flag.StringVar(&ipVar, "i", "127.0.0.1", "interface to listen on (default: 127.0.0.1)")
+	flag.StringVar(&ipVar, "i", "127.0.0.1", "IP address to listen on (default: 127.0.0.1)")
 	flag.Parse()
 
 	// Initialize app
