@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/ccureau/go-probot/probot"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v41/github"
 )
 
 func main() {

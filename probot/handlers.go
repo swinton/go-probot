@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v41/github"
 )
 
 var handlers = make(map[string]eventHandler)
