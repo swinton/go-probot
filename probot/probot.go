@@ -26,14 +26,14 @@ func Start() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", ipVar, portVar), mux))
 }
 
-func StartArgs(iface string, port string) {
+func StartArgs(iface string, port int) {
 	initialize()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", rootHandler(app))
 
 	// Server
 	log.Printf("Server running at: http://%s:%d/\n", iface, port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", iifacepVar, port), mux))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", iface, port), mux))
 }
 
 func initialize() {
