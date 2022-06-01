@@ -2,7 +2,6 @@ package probot
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -25,7 +24,7 @@ func StartArgs(iface string, port int, healthPort int) {
 
 	// Set up health check
 	healthMux := http.NewServeMux()
-	healthMux.HandleFunc("/health", func(w.http.http.ResponseWriter, r *http.Request) {
+	healthMux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 	})
 	go func() {
