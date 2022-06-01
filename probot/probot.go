@@ -17,7 +17,7 @@ var app *App
 
 // Start handles initialization and setup of the webhook server
 func Start() {
-	StartArgs("0.0.0.0", 8080)
+	StartArgs("0.0.0.0", 8080, 9999)
 }
 
 func StartArgs(iface string, port int, healthPort int) {
