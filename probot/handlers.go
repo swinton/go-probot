@@ -65,8 +65,9 @@ func rootHandler(app *App) func(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			log.Printf("Unknown event type: %s\n", github.WebHookType(r))
-			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
+                        // quick patch to stop PagerDuty burn rates
+			// http.Error(w, "Bad Request", http.StatusBadRequest)
+			// return
 		}
 
 		// Success!
