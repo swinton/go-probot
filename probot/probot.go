@@ -37,12 +37,12 @@ func StartArgs(iface string, port int, healthPort int) {
 	// Set up server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", rootHandler(app))
-	log.Infof("Server running at: http://%s:%d/\n", iface, port)
+	log.Infof("Server running at: http://%s:%d/", iface, port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", iface, port), mux))
 }
 
 func initialize() {
 	// Initialize app
 	app = NewApp()
-	log.Infof("Loaded GitHub App ID: %d\n", app.ID)
+	log.Infof("Loaded GitHub App ID: %d", app.ID)
 }

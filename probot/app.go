@@ -21,7 +21,6 @@ type App struct {
 
 // NewApp instantiates a GitHub App from environment variables
 func NewApp() *App {
-	log := newLogger()
 	// Read GitHub App credentials from environment
 	baseURL, exists := os.LookupEnv("GITHUB_BASE_URL")
 	if !exists {

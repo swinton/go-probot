@@ -2,9 +2,9 @@ package probot
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"io/ioutil"
+	"os"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -18,23 +18,10 @@ func reset(old io.ReadCloser, b []byte) io.ReadCloser {
 
 // Set up logging
 func newLogger() *zap.SugaredLogger {
-	rawJSON := []byte(`{
-		"level": "info",
-		"encoding": "json",
-		"outputPaths": ["stdout"],
-		"errorOutputPaths": ["stderr"],
-		"encoderConfig": {
-			"messageKey": "message",
-			"levelKey": "level",
-			"levelEncoder": "lowercase"
-		  }
-		}`)
-
-	var cfg zap.Config
-	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
-		panic(err)
+	cfg := zap.NewProductionConfig()
+	if os.Getenv("LOG_LEVEL") == "DEBUG" {
+		cfg.Level.SetLevel(zapcore.DebugLevel)
 	}
-	cfg.Level.SetLevel(zapcore.DebugLevel)
 	logger := zap.Must(cfg.Build())
 	defer logger.Sync()
 	return logger.Sugar()
