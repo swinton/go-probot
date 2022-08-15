@@ -18,11 +18,11 @@ var app *App
 
 // Start handles initialization and setup of the webhook server
 func Start() {
-	log = newLogger()
 	StartArgs("0.0.0.0", 8080, 9999)
 }
 
 func StartArgs(iface string, port int, healthPort int) {
+	log = newLogger()
 	initialize()
 
 	// Set up health check
