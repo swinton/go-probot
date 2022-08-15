@@ -19,3 +19,8 @@ bin
 
 # Project-specific environment variables, powered by direnv
 .envrc
+.vscode
+
+# vi stuff
+.swp
+*/.swp

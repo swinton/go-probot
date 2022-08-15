@@ -1,45 +1,48 @@
 package probot
 
 import (
-	"flag"
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
-var portVar int
+var (
+	portVar int
+	ipVar   string
+	log     *zap.SugaredLogger
+)
 
 var app *App
 
-// Router creates a new mux.Router and registers our webhook handler
-func Router(path string) *mux.Router {
-	r := mux.NewRouter()
-
-	r.HandleFunc(path, rootHandler(app)).Methods("POST")
-
-	return r
-}
-
 // Start handles initialization and setup of the webhook server
 func Start() {
+	StartArgs("0.0.0.0", 8080, 9999)
+}
+
+func StartArgs(iface string, port int, healthPort int) {
+	log = newLogger()
 	initialize()
 
-	// Webhook router
-	router := Router("/")
+	// Set up health check
+	healthMux := http.NewServeMux()
+	healthMux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	})
+	go func() {
+		http.ListenAndServe(fmt.Sprintf("%s:%d", iface, healthPort), healthMux)
+	}()
 
-	// Server
-	log.Printf("Server running at: http://localhost:%d/\n", portVar)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", portVar), router))
+	// Set up server
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", rootHandler(app))
+	log.Infof("Server running at: http://%s:%d/", iface, port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", iface, port), mux))
 }
 
 func initialize() {
-	// Parse incoming command-line arguments
-	flag.IntVar(&portVar, "p", 8000, "port to listen on, defaults to 8000")
-	flag.Parse()
-
 	// Initialize app
 	app = NewApp()
-	log.Printf("Loaded GitHub App ID: %d\n", app.ID)
+	log.Infof("Loaded GitHub App ID: %d", app.ID)
 }

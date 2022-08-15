@@ -2,10 +2,9 @@ package probot
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v41/github"
 )
 
 var handlers = make(map[string]eventHandler)
@@ -18,39 +17,39 @@ func rootHandler(app *App) func(w http.ResponseWriter, r *http.Request) {
 		// Per the docs: https://docs.github.com/en/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
 		payloadBytes, err := github.ValidatePayload(r, []byte(app.Secret))
 		if err != nil {
-			log.Println(err)
+			log.Info(err)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
 
 		// Log the request headers
-		log.Printf("Signature validates: %s\n", r.Header.Get("X-Hub-Signature"))
-		log.Printf("Headers: %v\n", r.Header)
+		log.Debugf("Signature validates: %s", r.Header.Get("X-Hub-Signature"))
+		log.Debugf("Headers: %v", r.Header)
 
 		// Get the installation from the payload
 		payload := &payloadInstallation{}
 		json.Unmarshal(payloadBytes, payload)
-		log.Printf("Installation: %d\n", payload.Installation.GetID())
-		log.Printf("Received GitHub App ID %d\n", app.ID)
+		log.Debugf("Installation: %d", payload.Installation.GetID())
+		log.Debugf("Received GitHub App ID %d", app.ID)
 
 		// Parse the incoming request into an event
 		context.Payload, err = github.ParseWebHook(github.WebHookType(r), payloadBytes)
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}
-		log.Printf("Event type: %T\n", context.Payload)
+		log.Infof("Event type: %T", context.Payload)
 
 		// Instantiate client
 		installation := &installation{ID: payload.Installation.GetID()}
 		context.GitHub, err = NewEnterpriseClient(app, installation)
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 			http.Error(w, "Server Error", http.StatusInternalServerError)
 			return
 		}
-		log.Printf("client %s instantiated for %s\n", context.GitHub.UserAgent, context.GitHub.BaseURL)
+		log.Debugf("client %s instantiated for %s", context.GitHub.UserAgent, context.GitHub.BaseURL)
 
 		// Reset the body for subsequent handlers to access
 		r.Body = reset(r.Body, payloadBytes)
@@ -59,14 +58,15 @@ func rootHandler(app *App) func(w http.ResponseWriter, r *http.Request) {
 		if handler, ok := handlers[github.WebHookType(r)]; ok {
 			err = handler(context)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 				http.Error(w, "Server Error", http.StatusInternalServerError)
 				return
 			}
 		} else {
-			log.Printf("Unknown event type: %s\n", github.WebHookType(r))
-			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
+			log.Debugf("Unknown event type: %s", github.WebHookType(r))
+			// quick patch to stop PagerDuty burn rates
+			// http.Error(w, "Bad Request", http.StatusBadRequest)
+			// return
 		}
 
 		// Success!
