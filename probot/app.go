@@ -8,8 +8,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/bradleyfalzon/ghinstallation"
-	"github.com/google/go-github/github"
+	"github.com/bradleyfalzon/ghinstallation/v2"
+	"github.com/google/go-github/v53/github"
 )
 
 // App encapsulates the fields needed to define a GitHub App
